@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
         name,
         role,
         auth_user_id: authData.user.id,
-        created_by: adminUser.id
+        created_by: adminUser.id || null
       })
 
     if (adminInsertError) {
@@ -52,9 +52,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: adminInsertError.message }, { status: 400 })
     }
 
-    return NextResponse.json({ success: true, user: authData.user })
+    return NextResponse.json({ 
+      success: true, 
+      user: {
+        id: authData.user.id,
+        email: authData.user.email
+      },
+      message: 'User created successfully'
+    }, { status: 201 })
   } catch (error: any) {
     console.error('Error creating user:', error)
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+    return NextResponse.json({ 
+      error: 'Internal server error',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    }, { status: 500 })
   }
 }

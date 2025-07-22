@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { supabase } from '../../lib/supabase'
 import { AdminLayout } from '../../components/AdminLayout'
 import { useAuth } from '../../hooks/useAuth'
+import { adminApi, ApiError } from '../../lib/api'
 import { Plus, Edit, Trash2, User, Shield, Crown, Mail } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -57,33 +58,34 @@ export const UserManagement: React.FC = () => {
     setSubmitting(true)
 
     try {
-      // Call server-side API to create user
-      const response = await fetch('/api/admin/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          name: formData.name,
-          password: formData.password,
-          role: formData.role
-        })
+      const result = await adminApi.createUser({
+        email: formData.email,
+        name: formData.name,
+        password: formData.password,
+        role: formData.role
       })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to create user')
-      }
 
       toast.success('User created successfully')
       setShowAddModal(false)
       setFormData({ email: '', name: '', password: '', role: 'admin' })
       fetchUsers()
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error creating user:', error)
-      toast.error(error.message || 'Failed to create user')
+      
+      if (error instanceof ApiError) {
+        toast.error(error.message)
+        
+        // Log additional details for debugging
+        console.error('API Error Details:', {
+          status: error.status,
+          message: error.message,
+          response: error.response
+        })
+      } else if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error('An unexpected error occurred')
+      }
     } finally {
       setSubmitting(false)
     }

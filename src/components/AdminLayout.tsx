@@ -2,7 +2,7 @@ import React from 'react'
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Scale, LayoutDashboard, FileText, Briefcase, LogOut, Home, Users, Tag, Menu, X } from 'lucide-react'
+import { Scale, LayoutDashboard, FileText, Briefcase, LogOut, Home, Users, Tag, Menu, X, ChevronRight } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 
 interface AdminLayoutProps {
@@ -29,7 +29,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 relative">
       {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 ${sidebarOpen ? 'w-64' : 'w-16'} bg-slate-900 text-white transition-all duration-300`}>
         <div className="flex items-center space-x-2 p-6 border-b border-slate-800">
@@ -42,12 +42,14 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
               )}
             </div>
           )}
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="ml-auto p-1 rounded-md hover:bg-slate-800 transition-colors"
-          >
-            {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
+          {sidebarOpen && (
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="ml-auto p-1 rounded-md hover:bg-slate-800 transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          )}
         </div>
         
         <nav className="mt-6">
@@ -92,6 +94,17 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           </div>
         </nav>
       </div>
+
+      {/* Sidebar Open Button - Only visible when sidebar is closed */}
+      {!sidebarOpen && (
+        <button
+          onClick={() => setSidebarOpen(true)}
+          className="fixed top-6 left-20 z-40 bg-slate-900 text-white p-2 rounded-md hover:bg-slate-800 transition-colors shadow-lg"
+          title="Open Sidebar"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      )}
 
       {/* Main content */}
       <div className={`${sidebarOpen ? 'pl-64' : 'pl-16'} transition-all duration-300`}>

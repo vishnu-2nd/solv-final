@@ -33,13 +33,29 @@ const ScrollToTop: React.FC = () => {
   return null;
 };
 
+// Component to conditionally render Navigation and Footer
+const ConditionalLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin');
+
+  if (isAdminRoute) {
+    return <>{children}</>;
+  }
+
+  return (
+    <>
+      <Navigation />
+      {children}
+      <Footer />
+    </>
+  );
+};
 function App() {
   return (
     <Router>
       <ScrollToTop />
       <div className="min-h-screen bg-slate-50">
-        <Navigation />
-        <main>
+        <ConditionalLayout>
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/about" element={<AboutUs />} />
@@ -101,8 +117,7 @@ function App() {
               </ProtectedRoute>
             } />
           </Routes>
-        </main>
-        <Footer />
+        </ConditionalLayout>
       </div>
     </Router>
   );

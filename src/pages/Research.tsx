@@ -21,6 +21,7 @@ export const Research: React.FC = () => {
   useEffect(() => {
     setCurrentPage(1); // Reset to first page when filters change
   }, [selectedFilter, searchTerm]);
+  
   const fetchArticlesAndTags = async () => {
     try {
       // Fetch articles with tags
@@ -341,79 +342,6 @@ export const Research: React.FC = () => {
                 totalItems={regularArticles.length}
               />
             </>
-          )}
-        </div>
-      </section>
-
-      {/* Newsletter Signup */}
-      <section className="py-16 bg-slate-900 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <BookOpen className="h-12 w-12 mx-auto mb-6 text-slate-300" />
-            <h2 className="text-3xl font-bold font-serif mb-4">Stay Informed</h2>
-            <p className="text-xl text-slate-300 mb-8">
-              Subscribe to our newsletter for the latest legal insights and industry updates delivered to your inbox.
-            </p>
-            <div className="flex flex-col sm:flex-row max-w-md mx-auto gap-4">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-4 py-3 rounded-md text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400"
-              />
-              <button className="bg-white text-slate-900 px-6 py-3 rounded-md font-semibold hover:bg-slate-100 transition-colors inline-flex items-center justify-center space-x-2">
-                <span>Subscribe</span>
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-    </div>
-  );
-};
-
-                <motion.article
-                  key={article.id}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105 group cursor-pointer"
-                  onClick={() => window.open(`/blog/${article.slug}`, '_blank')}
-                >
-                  <img
-                    src={article.featured_image || article.cover_url || 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=600'}
-                    alt={article.title}
-                    className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                  <div className="p-6">
-                    <div className="flex items-center space-x-2 mb-3">
-                      {article.blog_tag_relations?.slice(0, 1).map((rel: any) => (
-                        <span 
-                          key={rel.blog_tags.id}
-                          className="text-white text-xs px-2 py-1 rounded"
-                          style={{ backgroundColor: rel.blog_tags.color }}
-                        >
-                          {rel.blog_tags.name}
-                        </span>
-                      ))}
-                      <span className="text-slate-500 text-sm">{getReadTime(article.content)}</span>
-                    </div>
-                    <h3 className="text-lg font-semibold text-slate-900 mb-3 group-hover:text-slate-700 transition-colors">
-                      {article.title}
-                    </h3>
-                    <p className="text-slate-600 text-sm mb-4">{article.excerpt || article.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...'}</p>
-                    <div className="flex items-center justify-between text-xs text-slate-500">
-                      <span>{article.author}</span>
-                      <span>{formatDate(article.created_at)}</span>
-                    </div>
-                  </div>
-                </motion.article>
-              ))}
-            </div>
           )}
         </div>
       </section>

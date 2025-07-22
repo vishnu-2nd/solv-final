@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Navigation } from './components/Navigation';
 import { Footer } from './components/Footer';
+import { DisclaimerProvider } from './components/DisclaimerManager';
+import { DisclaimerPopup } from './components/DisclaimerPopup';
 import { LandingPage } from './pages/LandingPage';
 import { AboutUs } from './pages/AboutUs';
 import { Services } from './pages/Services';
@@ -52,74 +54,77 @@ const ConditionalLayout: React.FC<{ children: React.ReactNode }> = ({ children }
 };
 function App() {
   return (
-    <Router>
-      <ScrollToTop />
-      <div className="min-h-screen bg-slate-50">
-        <ConditionalLayout>
-          <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/about" element={<AboutUs />} />
-            <Route path="/services" element={<Services />} />
-            <Route path="/research" element={<Research />} />
-            <Route path="/careers" element={<Careers />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/disclaimer" element={<Disclaimer />} />
-            <Route path="/blog/:slug" element={<BlogPost />} />
-            
-            {/* Admin Login Routes - NOT PROTECTED */}
-            <Route path="/admin" element={<AdminLogin />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
-            
-            {/* Protected Admin Routes */}
-            <Route path="/admin/dashboard" element={
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/blogs" element={
-              <ProtectedRoute>
-                <AdminBlogs />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/blogs/create" element={
-              <ProtectedRoute>
-                <CreateBlog />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/blogs/edit/:id" element={
-              <ProtectedRoute>
-                <EditBlog />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/jobs" element={
-              <ProtectedRoute>
-                <AdminJobs />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/jobs/create" element={
-              <ProtectedRoute>
-                <CreateJob />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/jobs/edit/:id" element={
-              <ProtectedRoute>
-                <EditJob />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/users" element={
-              <ProtectedRoute>
-                <UserManagement />
-              </ProtectedRoute>
-            } />
-            <Route path="/admin/tags" element={
-              <ProtectedRoute>
-                <TagManagement />
-              </ProtectedRoute>
-            } />
-          </Routes>
-        </ConditionalLayout>
-      </div>
-    </Router>
+    <DisclaimerProvider>
+      <Router>
+        <ScrollToTop />
+        <DisclaimerPopup />
+        <div className="min-h-screen bg-slate-50">
+          <ConditionalLayout>
+            <Routes>
+              <Route path="/" element={<LandingPage />} />
+              <Route path="/about" element={<AboutUs />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/research" element={<Research />} />
+              <Route path="/careers" element={<Careers />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
+              
+              {/* Admin Login Routes - NOT PROTECTED */}
+              <Route path="/admin" element={<AdminLogin />} />
+              <Route path="/admin/login" element={<AdminLogin />} />
+              
+              {/* Protected Admin Routes */}
+              <Route path="/admin/dashboard" element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/blogs" element={
+                <ProtectedRoute>
+                  <AdminBlogs />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/blogs/create" element={
+                <ProtectedRoute>
+                  <CreateBlog />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/blogs/edit/:id" element={
+                <ProtectedRoute>
+                  <EditBlog />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/jobs" element={
+                <ProtectedRoute>
+                  <AdminJobs />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/jobs/create" element={
+                <ProtectedRoute>
+                  <CreateJob />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/jobs/edit/:id" element={
+                <ProtectedRoute>
+                  <EditJob />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/users" element={
+                <ProtectedRoute>
+                  <UserManagement />
+                </ProtectedRoute>
+              } />
+              <Route path="/admin/tags" element={
+                <ProtectedRoute>
+                  <TagManagement />
+                </ProtectedRoute>
+              } />
+            </Routes>
+          </ConditionalLayout>
+        </div>
+      </Router>
+    </DisclaimerProvider>
   );
 }
 

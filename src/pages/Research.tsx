@@ -222,46 +222,81 @@ export const Research: React.FC = () => {
             <p className="text-slate-600">Stay current with our ongoing research and analysis</p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {regularArticles.map((article, index) => (
-              <motion.article
-                key={article.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105 group cursor-pointer"
-                onClick={() => window.open(`/blog/${article.slug}`, '_blank')}
-              >
-                <img
-                  src={article.featured_image || article.cover_url || 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=600'}
-                  alt={article.title}
-                  className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="p-6">
-                  <div className="flex items-center space-x-2 mb-3">
-                    {article.blog_tag_relations?.slice(0, 1).map((rel: any) => (
-                      <span 
-                        key={rel.blog_tags.id}
-                        className="text-white text-xs px-2 py-1 rounded"
-                        style={{ backgroundColor: rel.blog_tags.color }}
-                      >
-                        {rel.blog_tags.name}
-                      </span>
-                    ))}
-                    <span className="text-slate-500 text-sm">{getReadTime(article.content)}</span>
+          {loading ? (
+            <div className="flex justify-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-slate-900"></div>
+            </div>
+          ) : (featuredArticles.length === 0 && regularArticles.length === 0) ? (
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center py-16"
+            >
+              <BookOpen className="h-24 w-24 text-slate-300 mx-auto mb-6" />
+              <h3 className="text-2xl font-semibold text-slate-900 mb-4">No Articles Available</h3>
+              <p className="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
+                We're working on creating valuable content for you. Check back soon for the latest legal insights, 
+                research, and industry analysis from our expert team.
+              </p>
+              <div className="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <a
+                  href="/contact"
+                  className="bg-gradient-to-r from-slate-800 to-slate-700 text-white px-8 py-3 rounded-md font-semibold hover:shadow-lg transition-all duration-200 hover:scale-105 inline-flex items-center space-x-2"
+                >
+                  <span>Contact Us</span>
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+                <a
+                  href="/services"
+                  className="border-2 border-slate-300 text-slate-700 px-8 py-3 rounded-md font-semibold hover:bg-slate-50 transition-all duration-200 inline-flex items-center space-x-2"
+                >
+                  <span>Our Services</span>
+                </a>
+              </div>
+            </motion.div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {regularArticles.map((article, index) => (
+                <motion.article
+                  key={article.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105 group cursor-pointer"
+                  onClick={() => window.open(`/blog/${article.slug}`, '_blank')}
+                >
+                  <img
+                    src={article.featured_image || article.cover_url || 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=600'}
+                    alt={article.title}
+                    className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="p-6">
+                    <div className="flex items-center space-x-2 mb-3">
+                      {article.blog_tag_relations?.slice(0, 1).map((rel: any) => (
+                        <span 
+                          key={rel.blog_tags.id}
+                          className="text-white text-xs px-2 py-1 rounded"
+                          style={{ backgroundColor: rel.blog_tags.color }}
+                        >
+                          {rel.blog_tags.name}
+                        </span>
+                      ))}
+                      <span className="text-slate-500 text-sm">{getReadTime(article.content)}</span>
+                    </div>
+                    <h3 className="text-lg font-semibold text-slate-900 mb-3 group-hover:text-slate-700 transition-colors">
+                      {article.title}
+                    </h3>
+                    <p className="text-slate-600 text-sm mb-4">{article.excerpt || article.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...'}</p>
+                    <div className="flex items-center justify-between text-xs text-slate-500">
+                      <span>{article.author}</span>
+                      <span>{formatDate(article.created_at)}</span>
+                    </div>
                   </div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-3 group-hover:text-slate-700 transition-colors">
-                    {article.title}
-                  </h3>
-                  <p className="text-slate-600 text-sm mb-4">{article.excerpt || article.content.replace(/<[^>]*>/g, '').substring(0, 100) + '...'}</p>
-                  <div className="flex items-center justify-between text-xs text-slate-500">
-                    <span>{article.author}</span>
-                    <span>{formatDate(article.created_at)}</span>
-                  </div>
-                </div>
-              </motion.article>
-            ))}
-          </div>
+                </motion.article>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

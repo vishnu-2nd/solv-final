@@ -231,7 +231,6 @@ export const Research: React.FC = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="bg-white border border-slate-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105 group cursor-pointer"
                 onClick={() => window.open(`/blog/${article.slug}`, '_blank')}
-                onClick={() => window.open(`/blog/${article.slug}`, '_blank')}
               >
                 <img
                   src={article.featured_image || article.cover_url || 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=600'}

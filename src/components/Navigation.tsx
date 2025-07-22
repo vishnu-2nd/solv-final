@@ -34,23 +34,23 @@ export const Navigation: React.FC = () => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-20 lg:h-24">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2 flex-shrink-0">
             <img 
               src="/solv.svg" 
               alt="SOLV Legal" 
-              className="h-8 w-auto"
+              className="h-12 w-auto lg:h-16 rounded-lg shadow-sm bg-white/10 p-1"
             />
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          <div className="hidden lg:flex items-center space-x-6 xl:space-x-8">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className={`text-sm font-medium transition-colors duration-200 hover:text-slate-600 ${
+                className={`text-sm lg:text-base font-medium transition-colors duration-200 hover:text-slate-600 whitespace-nowrap ${
                   location.pathname === item.path ? 'text-slate-800 border-b-2 border-slate-800' : 'text-slate-700'
                 }`}
               >
@@ -59,17 +59,17 @@ export const Navigation: React.FC = () => {
             ))}
             <Link
               to="/contact"
-              className="bg-gradient-to-r from-slate-800 to-slate-700 text-white px-6 py-2 rounded-md text-sm font-medium hover:shadow-lg transition-all duration-200 hover:scale-105"
+              className="bg-gradient-to-r from-slate-800 to-slate-700 text-white px-4 lg:px-6 py-2 lg:py-3 rounded-md text-sm lg:text-base font-medium hover:shadow-lg transition-all duration-200 hover:scale-105 whitespace-nowrap"
             >
               Speak With Our Experts
             </Link>
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-slate-700 hover:text-slate-900"
+              className="text-slate-700 hover:text-slate-900 p-2"
             >
               {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </button>
@@ -82,15 +82,15 @@ export const Navigation: React.FC = () => {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="md:hidden bg-white border-t border-slate-200"
+            className="lg:hidden bg-white border-t border-slate-200 shadow-lg"
           >
-            <div className="px-2 pt-2 pb-3 space-y-1">
+            <div className="px-4 pt-4 pb-6 space-y-3">
               {navItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={() => setIsOpen(false)}
-                  className={`block px-3 py-2 text-base font-medium transition-colors duration-200 ${
+                  className={`block px-4 py-3 text-base font-medium transition-colors duration-200 rounded-md ${
                     location.pathname === item.path ? 'text-slate-800 bg-slate-100' : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
@@ -100,7 +100,7 @@ export const Navigation: React.FC = () => {
               <Link
                 to="/contact"
                 onClick={() => setIsOpen(false)}
-                className="block mx-3 mt-4 bg-gradient-to-r from-slate-800 to-slate-700 text-white px-4 py-2 rounded-md text-base font-medium text-center"
+                className="block mx-4 mt-6 bg-gradient-to-r from-slate-800 to-slate-700 text-white px-6 py-3 rounded-md text-base font-medium text-center hover:shadow-lg transition-all duration-200"
               >
                 Speak With Our Experts
               </Link>

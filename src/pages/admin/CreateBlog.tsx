@@ -105,15 +105,30 @@ export const CreateBlog: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
-    if (!adminUser) {
-      setError('User not authenticated')
-      return
-    }
-    
     setLoading(true)
     setError('')
 
     try {
+      // Get current user
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      
+      if (userError || !user) {
+        setError('User not authenticated')
+        return
+      }
+
+      // Get admin user info
+      const { data: adminData, error: adminError } = await supabase
+        .from('admin_users')
+        .select('*')
+        .eq('auth_user_id', user.id)
+        .single()
+
+      if (adminError || !adminData) {
+        setError('Admin user not found')
+        return
+      }
+
       const { data: articleData, error: articleError } = await supabase
         .from('articles')
         .insert([{
@@ -121,8 +136,8 @@ export const CreateBlog: React.FC = () => {
           slug: formData.slug || generateSlug(formData.title),
           excerpt: formData.excerpt,
           content: formData.content,
-          author: adminUser.name,
-          author_id: adminUser.id,
+          author: adminData.name,
+          author_id: adminData.id,
           status: formData.status,
           is_featured: formData.is_featured,
           featured_image: formData.featured_image || null
@@ -134,7 +149,7 @@ export const CreateBlog: React.FC = () => {
         if (articleError.code === '23505') {
           setError('A blog with this slug already exists')
         } else {
-          setError('Failed to create blog')
+          setError(`Failed to create blog: ${articleError.message}`)
         }
         return
       }
@@ -157,8 +172,9 @@ export const CreateBlog: React.FC = () => {
 
       toast.success('Blog created successfully!')
       navigate('/admin/blogs')
-    } catch (err) {
-      setError('An unexpected error occurred')
+    } catch (err: any) {
+      console.error('Error creating blog:', err)
+      setError(`An unexpected error occurred: ${err.message}`)
     } finally {
       setLoading(false)
     }

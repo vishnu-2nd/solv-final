@@ -131,12 +131,14 @@ export const BlogPost: React.FC = () => {
 
       {/* Featured Image */}
       {(article.featured_image || article.cover_url) && (
-        <div className="relative h-64 md:h-96 overflow-hidden">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="relative h-64 md:h-96 overflow-hidden rounded-lg shadow-lg">
           <img
             src={article.featured_image || article.cover_url}
             alt={article.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-lg"
           />
+          </div>
         </div>
       )}
 

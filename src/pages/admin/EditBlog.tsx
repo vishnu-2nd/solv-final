@@ -4,6 +4,7 @@ import { supabase } from '../../lib/supabase'
 import { AdminLayout } from '../../components/AdminLayout'
 import { ArrowLeft, Save } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import toast from 'react-hot-toast'
 
 export const EditBlog: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -56,6 +57,14 @@ export const EditBlog: React.FC = () => {
     setError('')
 
     try {
+      // Get current user for authentication
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
+      
+      if (userError || !user) {
+        setError('User not authenticated')
+        return
+      }
+
       const { error } = await supabase
         .from('articles')
         .update({
@@ -71,13 +80,15 @@ export const EditBlog: React.FC = () => {
         if (error.code === '23505') {
           setError('A blog with this slug already exists')
         } else {
-          setError('Failed to update blog')
+          setError(`Failed to update blog: ${error.message}`)
         }
       } else {
+        toast.success('Blog updated successfully!')
         navigate('/admin/blogs')
       }
-    } catch (err) {
-      setError('An unexpected error occurred')
+    } catch (err: any) {
+      console.error('Error updating blog:', err)
+      setError(`An unexpected error occurred: ${err.message}`)
     } finally {
       setLoading(false)
     }

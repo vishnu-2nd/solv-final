@@ -37,8 +37,11 @@ export const Navigation: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <Scale className="h-8 w-8 text-slate-800" />
-            <span className="text-2xl font-bold text-slate-800 font-serif">SOLV</span>
+            <img 
+              src="/SOLV_LOGO.png" 
+              alt="SOLV Legal" 
+              className="h-8 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}

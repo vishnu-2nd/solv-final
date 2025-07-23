@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { AdminLayout } from '../../components/AdminLayout'
 import { useAuth } from '../../hooks/useAuth'
+import { RichTextEditor } from '../../components/RichTextEditor'
 import { ArrowLeft, Save, Upload, X } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import toast from 'react-hot-toast'
@@ -348,16 +349,11 @@ export const CreateBlog: React.FC = () => {
               <label htmlFor="content" className="block text-sm font-medium text-slate-700 mb-2">
                 Content *
               </label>
-              <textarea
-                id="content"
-                value={formData.content}
-                onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                required
-                rows={12}
-                className="w-full px-4 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
-                placeholder="Write your blog content here... (HTML supported)"
+              <RichTextEditor
+                content={formData.content}
+                onChange={(content) => setFormData(prev => ({ ...prev, content }))}
+                placeholder="Start writing your blog content..."
               />
-              <p className="text-sm text-slate-500 mt-1">You can use HTML tags for formatting</p>
             </div>
 
             <div className="flex items-center justify-end space-x-4 pt-6 border-t border-slate-200">

@@ -9,7 +9,7 @@ import TextStyle from '@tiptap/extension-text-style'
 import Color from '@tiptap/extension-color'
 import Highlight from '@tiptap/extension-highlight'
 import FontFamily from '@tiptap/extension-font-family'
-import { Button } from './ui/Button'
+import { Button } from '../../components/ui/Button'
 import { 
   Bold, 
   Italic, 

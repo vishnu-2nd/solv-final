@@ -49,11 +49,11 @@ export const Footer: React.FC = () => {
             <ul className="space-y-3">
               <li className="flex items-start space-x-2">
                 <MapPin className="h-5 w-5 text-slate-400 mt-0.5 flex-shrink-0" />
-                <span className="text-sm">123 Legal District, Corporate Tower, New York, NY 10001</span>
+                <span className="text-sm">No. 45, First Floor, 19th cross road, 7th Main Rd, BTM 2nd Stage, Bengaluru, Karnataka 560076</span>
               </li>
               <li className="flex items-center space-x-2">
                 <Phone className="h-5 w-5 text-slate-400" />
-                <span className="text-sm">+1 (555) 123-4567</span>
+                <span className="text-sm">+91 80 1234 5678</span>
               </li>
               <li className="flex items-center space-x-2">
                 <Mail className="h-5 w-5 text-slate-400" />

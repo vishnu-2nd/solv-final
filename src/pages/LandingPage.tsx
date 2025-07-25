@@ -1,9 +1,19 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Scale, Building, Shield, Users, Award, ChevronRight, Star, Quote } from 'lucide-react';
+import { ArrowRight, Scale, Building, Shield, Users, Award, ChevronRight, Star, Quote, RefreshCw } from 'lucide-react';
+import { legalQuotes } from '../data/quotes';
 
 export const LandingPage: React.FC = () => {
+  const [currentQuote, setCurrentQuote] = useState(0);
+
+  // Rotate quotes on page refresh/load
+  useEffect(() => {
+    const randomIndex = Math.floor(Math.random() * legalQuotes.length);
+    setCurrentQuote(randomIndex);
+  }, []);
+
   const practiceAreas = [
     { icon: Building, title: 'Corporate Law', description: 'Strategic counsel for business transactions and governance' },
     { icon: Shield, title: 'Intellectual Property', description: 'Comprehensive IP protection and enforcement strategies' },
@@ -137,43 +147,68 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-20 bg-slate-900 text-white">
+      {/* Legal Quotes Section */}
+      <section className="py-20 bg-slate-900 text-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center"
+          >
+            <h2 className="text-2xl lg:text-3xl font-bold font-serif text-slate-300 mb-12">
+              Words of Wisdom
+            </h2>
+            
             <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
+              key={currentQuote}
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
+              transition={{ duration: 0.8 }}
+              className="max-w-4xl mx-auto"
             >
-              <div className="text-4xl font-bold font-serif mb-2">500+</div>
-              <div className="text-slate-300">Cases Successfully Resolved</div>
+              <Quote className="h-16 w-16 text-slate-400 mx-auto mb-8 opacity-50" />
+              
+              <blockquote className="text-xl lg:text-2xl font-serif text-white leading-relaxed mb-8 italic">
+                "{legalQuotes[currentQuote].quote}"
+              </blockquote>
+              
+              <div className="text-slate-300">
+                <div className="text-lg font-semibold mb-1">
+                  {legalQuotes[currentQuote].author}
+                </div>
+                <div className="text-sm opacity-75">
+                  {legalQuotes[currentQuote].title}
+                </div>
+              </div>
             </motion.div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-            >
-              <div className="text-4xl font-bold font-serif mb-2">25+</div>
-              <div className="text-slate-300">Years of Combined Experience</div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-            >
-              <div className="text-4xl font-bold font-serif mb-2">98%</div>
-              <div className="text-slate-300">Client Satisfaction Rate</div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-            >
-              <div className="text-4xl font-bold font-serif mb-2">15</div>
-              <div className="text-slate-300">Countries Served</div>
-            </motion.div>
-          </div>
+            
+            <div className="flex justify-center items-center mt-12 space-x-4">
+              <button
+                onClick={() => {
+                  const randomIndex = Math.floor(Math.random() * legalQuotes.length);
+                  setCurrentQuote(randomIndex);
+                }}
+                className="flex items-center space-x-2 text-slate-400 hover:text-white transition-colors duration-200 text-sm"
+              >
+                <RefreshCw className="h-4 w-4" />
+                <span>New Quote</span>
+              </button>
+              
+              <div className="flex space-x-2">
+                {legalQuotes.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentQuote(index)}
+                    className={`w-2 h-2 rounded-full transition-colors duration-200 ${
+                      index === currentQuote ? 'bg-white' : 'bg-slate-600 hover:bg-slate-400'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 

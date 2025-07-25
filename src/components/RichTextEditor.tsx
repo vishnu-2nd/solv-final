@@ -1,7 +1,6 @@
 import React from 'react'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
@@ -15,7 +14,6 @@ import {
   Italic, 
   Underline as UnderlineIcon, 
   Strikethrough, 
-  Code, 
   List, 
   ListOrdered,
   Quote,
@@ -24,11 +22,7 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
-  Image as ImageIcon,
   Link as LinkIcon,
-  Heading1,
-  Heading2,
-  Heading3,
   Type,
   ChevronDown
 } from 'lucide-react'
@@ -87,11 +81,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Image.configure({
-        HTMLAttributes: {
-          class: 'max-w-full h-auto rounded-lg',
-        },
-      }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -122,12 +111,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
   })
 
-  const addImage = useCallback(() => {
-    const url = window.prompt('Enter image URL:')
-    if (url && editor) {
-      editor.chain().focus().setImage({ src: url }).run()
-    }
-  }, [editor])
 
   const addLink = useCallback(() => {
     if (editor) {
@@ -176,30 +159,36 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     <div className="border border-slate-300 rounded-lg overflow-hidden">
       {/* Toolbar */}
       <div className="border-b border-slate-300 p-2 flex flex-wrap gap-1 bg-slate-50">
-        {/* Headings */}
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          isActive={editor.isActive('heading', { level: 1 })}
-          title="Heading 1"
-        >
-          <Heading1 className="w-4 h-4" />
-        </ToolbarButton>
-        
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-          isActive={editor.isActive('heading', { level: 2 })}
-          title="Heading 2"
-        >
-          <Heading2 className="w-4 h-4" />
-        </ToolbarButton>
-        
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-          isActive={editor.isActive('heading', { level: 3 })}
-          title="Heading 3"
-        >
-          <Heading3 className="w-4 h-4" />
-        </ToolbarButton>
+        {/* Headings Dropdown */}
+        <div className="relative">
+          <select
+            onChange={(e) => {
+              const level = parseInt(e.target.value)
+              if (level === 0) {
+                editor.chain().focus().setParagraph().run()
+              } else {
+                editor.chain().focus().toggleHeading({ level }).run()
+              }
+            }}
+            value={
+              editor.isActive('heading', { level: 1 }) ? '1' :
+              editor.isActive('heading', { level: 2 }) ? '2' :
+              editor.isActive('heading', { level: 3 }) ? '3' :
+              editor.isActive('heading', { level: 4 }) ? '4' :
+              editor.isActive('heading', { level: 5 }) ? '5' :
+              editor.isActive('heading', { level: 6 }) ? '6' : '0'
+            }
+            className="text-sm border border-slate-300 rounded px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-slate-500"
+          >
+            <option value="0">Paragraph</option>
+            <option value="1">Heading 1</option>
+            <option value="2">Heading 2</option>
+            <option value="3">Heading 3</option>
+            <option value="4">Heading 4</option>
+            <option value="5">Heading 5</option>
+            <option value="6">Heading 6</option>
+          </select>
+        </div>
 
         <div className="w-px h-6 bg-slate-300 mx-1" />
 
@@ -267,13 +256,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <Strikethrough className="w-4 h-4" />
         </ToolbarButton>
 
-        <ToolbarButton
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          isActive={editor.isActive('code')}
-          title="Code"
-        >
-          <Code className="w-4 h-4" />
-        </ToolbarButton>
 
         <div className="w-px h-6 bg-slate-300 mx-1" />
 
@@ -329,12 +311,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
         <div className="w-px h-6 bg-slate-300 mx-1" />
 
-        <ToolbarButton
-          onClick={addImage}
-          title="Add Image"
-        >
-          <ImageIcon className="w-4 h-4" />
-        </ToolbarButton>
 
         <ToolbarButton
           onClick={addLink}

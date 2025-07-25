@@ -12,13 +12,24 @@ export const AdminDashboard: React.FC = () => {
     recentJobs: 0
   })
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchStats()
   }, [])
 
   const fetchStats = async () => {
+    let timeoutId: NodeJS.Timeout
+    
     try {
+      setError(null)
+      
+      // Set timeout for stats fetch
+      timeoutId = setTimeout(() => {
+        setError('Failed to load dashboard data. Please refresh the page.')
+        setLoading(false)
+      }, 10000) // 10 second timeout
+      
       // Get total blogs
       const { count: totalBlogs } = await supabase
         .from('articles')
@@ -44,6 +55,7 @@ export const AdminDashboard: React.FC = () => {
         .select('*', { count: 'exact', head: true })
         .gte('created_at', weekAgo.toISOString())
 
+      clearTimeout(timeoutId)
       setStats({
         totalBlogs: totalBlogs || 0,
         totalJobs: totalJobs || 0,
@@ -52,11 +64,17 @@ export const AdminDashboard: React.FC = () => {
       })
     } catch (error) {
       console.error('Error fetching stats:', error)
+      setError('Failed to load dashboard statistics')
     } finally {
       setLoading(false)
     }
   }
 
+  const retry = () => {
+    setLoading(true)
+    setError(null)
+    fetchStats()
+  }
   const statCards = [
     {
       title: 'Total Blogs',
@@ -88,6 +106,24 @@ export const AdminDashboard: React.FC = () => {
     }
   ]
 
+  if (error) {
+    return (
+      <AdminLayout>
+        <div className="text-center py-12">
+          <div className="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto">
+            <h2 className="text-xl font-semibold text-slate-900 mb-4">Error Loading Dashboard</h2>
+            <p className="text-slate-600 mb-6">{error}</p>
+            <button
+              onClick={retry}
+              className="bg-slate-900 text-white px-6 py-3 rounded-md hover:bg-slate-800 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </AdminLayout>
+    )
+  }
   return (
     <AdminLayout>
       <div className="space-y-8">

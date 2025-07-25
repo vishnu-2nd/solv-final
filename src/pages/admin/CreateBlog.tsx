@@ -19,17 +19,22 @@ export const CreateBlog: React.FC = () => {
     status: 'published' as 'draft' | 'published',
     is_featured: false,
     featured_image: '',
+    video_url: '',
+    selected_author_id: '',
     selectedTags: [] as string[]
   })
   const [tags, setTags] = useState<any[]>([])
+  const [authors, setAuthors] = useState<any[]>([])
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [uploadingImage, setUploadingImage] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [loadingAuthors, setLoadingAuthors] = useState(true)
   const [error, setError] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
     fetchTags()
+    fetchAuthors()
   }, [])
 
   const fetchTags = async () => {
@@ -46,6 +51,22 @@ export const CreateBlog: React.FC = () => {
     }
   }
 
+  const fetchAuthors = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('admin_users')
+        .select('id, name, email')
+        .order('name')
+
+      if (error) throw error
+      setAuthors(data || [])
+    } catch (error) {
+      console.error('Error fetching authors:', error)
+      toast.error('Failed to load authors')
+    } finally {
+      setLoadingAuthors(false)
+    }
+  }
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
@@ -118,16 +139,34 @@ export const CreateBlog: React.FC = () => {
         return
       }
 
-      // Get admin user info
-      const { data: adminData, error: adminError } = await supabase
-        .from('admin_users')
-        .select('*')
-        .eq('auth_user_id', user.id)
-        .single()
+      // Determine author
+      let authorData
+      if (formData.selected_author_id) {
+        // Use selected author
+        const { data, error } = await supabase
+          .from('admin_users')
+          .select('*')
+          .eq('id', formData.selected_author_id)
+          .single()
+        
+        if (error || !data) {
+          setError('Selected author not found')
+          return
+        }
+        authorData = data
+      } else {
+        // Use current logged-in user as author
+        const { data, error } = await supabase
+          .from('admin_users')
+          .select('*')
+          .eq('auth_user_id', user.id)
+          .single()
 
-      if (adminError || !adminData) {
-        setError('Admin user not found')
-        return
+        if (error || !data) {
+          setError('Current user admin data not found')
+          return
+        }
+        authorData = data
       }
 
       const { data: articleData, error: articleError } = await supabase
@@ -137,11 +176,12 @@ export const CreateBlog: React.FC = () => {
           slug: formData.slug || generateSlug(formData.title),
           excerpt: formData.excerpt,
           content: formData.content,
-          author: adminData.name,
-          author_id: adminData.id,
+          author: authorData.name,
+          author_id: authorData.id,
           status: formData.status,
           is_featured: formData.is_featured,
-          featured_image: formData.featured_image || null
+          featured_image: formData.featured_image || null,
+          video_url: formData.video_url || null
         }])
         .select()
         .single()
@@ -252,6 +292,32 @@ export const CreateBlog: React.FC = () => {
             </div>
 
             <div>
+              <label htmlFor="author" className="block text-sm font-medium text-slate-700 mb-2">
+                Author
+              </label>
+              {loadingAuthors ? (
+                <div className="flex items-center space-x-2 text-slate-600">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-slate-600"></div>
+                  <span>Loading authors...</span>
+                </div>
+              ) : (
+                <select
+                  id="author"
+                  value={formData.selected_author_id}
+                  onChange={(e) => setFormData(prev => ({ ...prev, selected_author_id: e.target.value }))}
+                  className="w-full px-4 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+                >
+                  <option value="">Use current user as author</option>
+                  {authors.map((author) => (
+                    <option key={author.id} value={author.id}>
+                      {author.name} ({author.email})
+                    </option>
+                  ))}
+                </select>
+              )}
+              <p className="text-sm text-slate-500 mt-1">Leave empty to use your account as the author</p>
+            </div>
+            <div>
               <label htmlFor="excerpt" className="block text-sm font-medium text-slate-700 mb-2">
                 Excerpt
               </label>
@@ -307,6 +373,20 @@ export const CreateBlog: React.FC = () => {
               </div>
             </div>
 
+            <div>
+              <label htmlFor="video_url" className="block text-sm font-medium text-slate-700 mb-2">
+                Video URL (Optional)
+              </label>
+              <input
+                type="url"
+                id="video_url"
+                value={formData.video_url}
+                onChange={(e) => setFormData(prev => ({ ...prev, video_url: e.target.value }))}
+                className="w-full px-4 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+                placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
+              />
+              <p className="text-sm text-slate-500 mt-1">Add a YouTube, Vimeo, or other video URL to embed in the article</p>
+            </div>
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
                 Tags

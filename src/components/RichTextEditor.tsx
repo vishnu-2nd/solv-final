@@ -308,6 +308,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
         <div className="w-px h-6 bg-slate-300 mx-1" />
 
+        {/* Lists and Quote - COMMENTED OUT */}
+        {/*
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           isActive={editor.isActive('bulletList')}

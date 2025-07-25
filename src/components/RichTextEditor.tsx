@@ -8,7 +8,6 @@ import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import { Highlight } from '@tiptap/extension-highlight'
 import { FontFamily } from '@tiptap/extension-font-family'
-import { Button } from '../ui/Button'
 import { 
   Bold, 
   Italic, 
@@ -87,14 +86,30 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         bulletList: {
           keepMarks: true,
           keepAttributes: false,
+          HTMLAttributes: {
+            class: 'list-disc list-inside ml-4',
+          },
         },
         orderedList: {
           keepMarks: true,
           keepAttributes: false,
+          HTMLAttributes: {
+            class: 'list-decimal list-inside ml-4',
+          },
+        },
+        listItem: {
+          HTMLAttributes: {
+            class: 'mb-1',
+          },
         },
         blockquote: {
           HTMLAttributes: {
-            class: 'border-l-4 border-slate-300 pl-4 italic',
+            class: 'border-l-4 border-slate-300 pl-4 italic my-4',
+          },
+        },
+        paragraph: {
+          HTMLAttributes: {
+            class: 'mb-3',
           },
         },
       }),
@@ -173,6 +188,27 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     return font ? font.name : 'Default'
   }
 
+  const setHeading = (level: number) => {
+    if (!editor) return
+    
+    if (level === 0) {
+      editor.chain().focus().setParagraph().run()
+    } else {
+      editor.chain().focus().toggleHeading({ level: level as 1 | 2 | 3 | 4 | 5 | 6 }).run()
+    }
+  }
+
+  const getCurrentHeading = () => {
+    if (!editor) return 0
+    
+    for (let i = 1; i <= 6; i++) {
+      if (editor.isActive('heading', { level: i })) {
+        return i
+      }
+    }
+    return 0 // paragraph
+  }
+
   if (!editor) {
     return (
       <div className="border border-slate-300 rounded-lg p-4 min-h-[300px] flex items-center justify-center">
@@ -188,22 +224,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         {/* Headings Dropdown */}
         <div className="relative">
           <select
-            onChange={(e) => {
-              const level = parseInt(e.target.value)
-              if (level === 0) {
-                editor.chain().focus().setParagraph().run()
-              } else {
-                editor.chain().focus().toggleHeading({ level: level as 1 | 2 | 3 | 4 | 5 | 6 }).run()
-              }
-            }}
-            value={
-              editor.isActive('heading', { level: 1 }) ? '1' :
-              editor.isActive('heading', { level: 2 }) ? '2' :
-              editor.isActive('heading', { level: 3 }) ? '3' :
-              editor.isActive('heading', { level: 4 }) ? '4' :
-              editor.isActive('heading', { level: 5 }) ? '5' :
-              editor.isActive('heading', { level: 6 }) ? '6' : '0'
-            }
+            onChange={(e) => setHeading(parseInt(e.target.value))}
+            value={getCurrentHeading()}
             className="text-sm border border-slate-300 rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-slate-500 min-w-[120px]"
           >
             <option value="0">Paragraph</option>

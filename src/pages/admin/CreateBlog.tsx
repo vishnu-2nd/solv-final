@@ -121,7 +121,7 @@ export const CreateBlog: React.FC = () => {
     setFormData(prev => ({
       ...prev,
       title,
-      slug: prev.slug || generateSlug(title)
+      slug: generateSlug(title)
     }))
   }
 
@@ -196,8 +196,7 @@ export const CreateBlog: React.FC = () => {
           author_id: authorData.id,
           status: formData.status,
           is_featured: formData.is_featured,
-          featured_image: formData.featured_image || null,
-          video_url: formData.video_url || null
+          featured_image: formData.featured_image || null
         }])
         .select()
         .single()
@@ -211,23 +210,6 @@ export const CreateBlog: React.FC = () => {
         }
         setLoading(false)
         return
-      }
-
-      // Add tag relations
-      if (formData.selectedTags.length > 0) {
-        const tagRelations = formData.selectedTags.map(tagId => ({
-          article_id: articleData.id,
-          tag_id: tagId
-        }))
-
-        const { error: tagError } = await supabase
-          .from('blog_tag_relations')
-          .insert(tagRelations)
-
-        if (tagError) {
-          console.error('Error adding tags:', tagError)
-          toast.error('Blog created but failed to add tags')
-        }
       }
 
       toast.success('Blog created successfully!')
@@ -405,30 +387,6 @@ export const CreateBlog: React.FC = () => {
                 placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
               />
               <p className="text-sm text-slate-500 mt-1">Add a YouTube, Vimeo, or other video URL to embed in the article</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Tags
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    onClick={() => toggleTag(tag.id)}
-                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                      formData.selectedTags.includes(tag.id)
-                        ? 'text-white'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }`}
-                    style={{
-                      backgroundColor: formData.selectedTags.includes(tag.id) ? tag.color : undefined
-                    }}
-                  >
-                    {tag.name}
-                  </button>
-                ))}
-              </div>
             </div>
 
             <div className="flex items-center space-x-2">

@@ -163,7 +163,7 @@ export const EditBlog: React.FC = () => {
     setFormData(prev => ({
       ...prev,
       title,
-      slug: prev.slug || generateSlug(title)
+      slug: generateSlug(title)
     }))
   }
 
@@ -238,8 +238,7 @@ export const EditBlog: React.FC = () => {
           status: formData.status,
           is_featured: formData.is_featured,
           featured_image: formData.featured_image || null,
-          cover_url: formData.featured_image || null, // Keep for backward compatibility
-          video_url: formData.video_url || null
+          cover_url: formData.featured_image || null // Keep for backward compatibility
         })
         .eq('id', id)
 
@@ -252,30 +251,6 @@ export const EditBlog: React.FC = () => {
         }
         setLoading(false)
         return
-      }
-
-      // Update tag relations
-      // First, remove existing relations
-      await supabase
-        .from('blog_tag_relations')
-        .delete()
-        .eq('article_id', id)
-
-      // Then add new relations
-      if (formData.selectedTags.length > 0) {
-        const tagRelations = formData.selectedTags.map(tagId => ({
-          article_id: id,
-          tag_id: tagId
-        }))
-
-        const { error: tagError } = await supabase
-          .from('blog_tag_relations')
-          .insert(tagRelations)
-
-        if (tagError) {
-          console.error('Error updating tags:', tagError)
-          toast.error('Blog updated but failed to update tags')
-        }
       }
 
       toast.success('Blog updated successfully!')
@@ -463,30 +438,6 @@ export const EditBlog: React.FC = () => {
                 placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
               />
               <p className="text-sm text-slate-500 mt-1">Add a YouTube, Vimeo, or other video URL to embed in the article</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
-                Tags
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {tags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    onClick={() => toggleTag(tag.id)}
-                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                      formData.selectedTags.includes(tag.id)
-                        ? 'text-white'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }`}
-                    style={{
-                      backgroundColor: formData.selectedTags.includes(tag.id) ? tag.color : undefined
-                    }}
-                  >
-                    {tag.name}
-                  </button>
-                ))}
-              </div>
             </div>
 
             <div className="flex items-center space-x-2">

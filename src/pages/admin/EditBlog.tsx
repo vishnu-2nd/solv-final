@@ -152,10 +152,11 @@ export const EditBlog: React.FC = () => {
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
+      .trim()
       .replace(/[^\w\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
-      .trim()
+      .replace(/^-+|-+$/g, '')
   }
 
   const handleTitleChange = (title: string) => {
@@ -168,6 +169,17 @@ export const EditBlog: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!formData.title.trim()) {
+      toast.error('Title is required')
+      return
+    }
+
+    if (!formData.content.trim()) {
+      toast.error('Content is required')
+      return
+    }
+
     setLoading(true)
     setError('')
 
@@ -176,7 +188,8 @@ export const EditBlog: React.FC = () => {
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       
       if (userError || !user) {
-        setError('User not authenticated')
+        toast.error('User not authenticated. Please log in again.')
+        setLoading(false)
         return
       }
 
@@ -191,7 +204,8 @@ export const EditBlog: React.FC = () => {
           .single()
         
         if (error || !data) {
-          setError('Selected author not found')
+          toast.error('Selected author not found')
+          setLoading(false)
           return
         }
         authorData = data
@@ -204,17 +218,19 @@ export const EditBlog: React.FC = () => {
           .single()
 
         if (error || !data) {
-          setError('Current user admin data not found')
+          toast.error('Current user admin data not found. Please contact support.')
+          setLoading(false)
           return
         }
         authorData = data
       }
 
+      const finalSlug = formData.slug.trim() || generateSlug(formData.title)
       const { error: articleError } = await supabase
         .from('articles')
         .update({
           title: formData.title,
-          slug: formData.slug || generateSlug(formData.title),
+          slug: finalSlug,
           excerpt: formData.excerpt,
           content: formData.content,
           author: authorData.name,
@@ -228,11 +244,13 @@ export const EditBlog: React.FC = () => {
         .eq('id', id)
 
       if (articleError) {
+        console.error('Article update error:', articleError)
         if (articleError.code === '23505') {
-          setError('A blog with this slug already exists')
+          toast.error('A blog with this slug already exists. Please use a different title or slug.')
         } else {
-          setError(`Failed to update blog: ${articleError.message}`)
+          toast.error(`Failed to update blog: ${articleError.message}`)
         }
+        setLoading(false)
         return
       }
 
@@ -256,6 +274,7 @@ export const EditBlog: React.FC = () => {
 
         if (tagError) {
           console.error('Error updating tags:', tagError)
+          toast.error('Blog updated but failed to update tags')
         }
       }
 
@@ -263,7 +282,7 @@ export const EditBlog: React.FC = () => {
       navigate('/admin/blogs')
     } catch (err: any) {
       console.error('Error updating blog:', err)
-      setError(`An unexpected error occurred: ${err.message}`)
+      toast.error(`An unexpected error occurred: ${err.message || 'Please try again'}`)
     } finally {
       setLoading(false)
     }

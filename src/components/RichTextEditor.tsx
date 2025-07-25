@@ -8,7 +8,7 @@ import { TextStyle } from '@tiptap/extension-text-style'
 import { Color } from '@tiptap/extension-color'
 import { Highlight } from '@tiptap/extension-highlight'
 import { FontFamily } from '@tiptap/extension-font-family'
-import { Button } from '../../components/ui/Button'
+import { Button } from '../ui/Button'
 import { 
   Bold, 
   Italic, 
@@ -80,7 +80,24 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        heading: {
+          levels: [1, 2, 3, 4, 5, 6],
+        },
+        bulletList: {
+          keepMarks: true,
+          keepAttributes: false,
+        },
+        orderedList: {
+          keepMarks: true,
+          keepAttributes: false,
+        },
+        blockquote: {
+          HTMLAttributes: {
+            class: 'border-l-4 border-slate-300 pl-4 italic',
+          },
+        },
+      }),
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -106,11 +123,10 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
     },
     editorProps: {
       attributes: {
-        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[200px] p-4',
+        class: 'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[300px] p-4 max-w-none',
       },
     },
   })
-
 
   const addLink = useCallback(() => {
     if (editor) {
@@ -118,6 +134,8 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       const text = editor.state.doc.textBetween(from, to, '')
       
       if (text) {
+        const previousUrl = editor.getAttributes('link').href
+        setLinkUrl(previousUrl || '')
         setIsLinkModalOpen(true)
       } else {
         toast.error('Please select text first to add a link')
@@ -127,7 +145,11 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
   const handleLinkSubmit = useCallback(() => {
     if (editor && linkUrl) {
-      editor.chain().focus().setLink({ href: linkUrl }).run()
+      if (linkUrl === '') {
+        editor.chain().focus().extendMarkRange('link').unsetLink().run()
+      } else {
+        editor.chain().focus().extendMarkRange('link').setLink({ href: linkUrl }).run()
+      }
     }
     setIsLinkModalOpen(false)
     setLinkUrl('')
@@ -152,7 +174,11 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   }
 
   if (!editor) {
-    return null
+    return (
+      <div className="border border-slate-300 rounded-lg p-4 min-h-[300px] flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-900"></div>
+      </div>
+    )
   }
 
   return (
@@ -167,7 +193,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               if (level === 0) {
                 editor.chain().focus().setParagraph().run()
               } else {
-                editor.chain().focus().toggleHeading({ level }).run()
+                editor.chain().focus().toggleHeading({ level: level as 1 | 2 | 3 | 4 | 5 | 6 }).run()
               }
             }}
             value={
@@ -178,7 +204,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               editor.isActive('heading', { level: 5 }) ? '5' :
               editor.isActive('heading', { level: 6 }) ? '6' : '0'
             }
-            className="text-sm border border-slate-300 rounded px-2 py-1 bg-white focus:outline-none focus:ring-2 focus:ring-slate-500"
+            className="text-sm border border-slate-300 rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-slate-500 min-w-[120px]"
           >
             <option value="0">Paragraph</option>
             <option value="1">Heading 1</option>
@@ -197,11 +223,13 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <button
             type="button"
             onClick={() => setShowFontDropdown(!showFontDropdown)}
-            className="flex items-center space-x-1 p-2 rounded hover:bg-slate-100 transition-colors text-slate-600 text-sm"
+            className="flex items-center space-x-1 p-2 rounded hover:bg-slate-100 transition-colors text-slate-600 text-sm border border-slate-300 bg-white min-w-[100px] justify-between"
             title="Font Family"
           >
-            <Type className="w-4 h-4" />
-            <span className="hidden sm:inline">{getCurrentFontFamily()}</span>
+            <div className="flex items-center space-x-1">
+              <Type className="w-4 h-4" />
+              <span className="hidden sm:inline">{getCurrentFontFamily()}</span>
+            </div>
             <ChevronDown className="w-3 h-3" />
           </button>
           
@@ -255,7 +283,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         >
           <Strikethrough className="w-4 h-4" />
         </ToolbarButton>
-
 
         <div className="w-px h-6 bg-slate-300 mx-1" />
 
@@ -311,7 +338,6 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
         <div className="w-px h-6 bg-slate-300 mx-1" />
 
-
         <ToolbarButton
           onClick={addLink}
           isActive={editor.isActive('link')}
@@ -338,7 +364,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       </div>
 
       {/* Editor */}
-      <EditorContent editor={editor} />
+      <div className="min-h-[300px]">
+        <EditorContent editor={editor} />
+      </div>
 
       {/* Link Modal */}
       {isLinkModalOpen && (
@@ -350,22 +378,27 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
               value={linkUrl}
               onChange={(e) => setLinkUrl(e.target.value)}
               placeholder="Enter URL..."
-              className="w-full p-2 border border-slate-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-slate-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-slate-500"
               autoFocus
             />
             <div className="flex justify-end space-x-2">
-              <Button
-                variant="outline"
+              <button
+                type="button"
                 onClick={() => {
                   setIsLinkModalOpen(false)
                   setLinkUrl('')
                 }}
+                className="px-4 py-2 border border-slate-300 text-slate-700 rounded hover:bg-slate-50"
               >
                 Cancel
-              </Button>
-              <Button onClick={handleLinkSubmit}>
+              </button>
+              <button
+                type="button"
+                onClick={handleLinkSubmit}
+                className="px-4 py-2 bg-slate-900 text-white rounded hover:bg-slate-800"
+              >
                 Add Link
-              </Button>
+              </button>
             </div>
           </div>
         </div>

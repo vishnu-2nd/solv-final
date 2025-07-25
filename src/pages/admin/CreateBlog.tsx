@@ -70,10 +70,11 @@ export const CreateBlog: React.FC = () => {
   const generateSlug = (title: string) => {
     return title
       .toLowerCase()
+      .trim()
       .replace(/[^\w\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
-      .trim()
+      .replace(/^-+|-+$/g, '')
   }
 
   const handleImageUpload = async (file: File) => {
@@ -127,6 +128,16 @@ export const CreateBlog: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     
+    if (!formData.title.trim()) {
+      toast.error('Title is required')
+      return
+    }
+
+    if (!formData.content.trim()) {
+      toast.error('Content is required')
+      return
+    }
+
     setLoading(true)
     setError('')
 
@@ -135,7 +146,8 @@ export const CreateBlog: React.FC = () => {
       const { data: { user }, error: userError } = await supabase.auth.getUser()
       
       if (userError || !user) {
-        setError('User not authenticated')
+        toast.error('User not authenticated. Please log in again.')
+        setLoading(false)
         return
       }
 
@@ -150,7 +162,8 @@ export const CreateBlog: React.FC = () => {
           .single()
         
         if (error || !data) {
-          setError('Selected author not found')
+          toast.error('Selected author not found')
+          setLoading(false)
           return
         }
         authorData = data
@@ -163,17 +176,20 @@ export const CreateBlog: React.FC = () => {
           .single()
 
         if (error || !data) {
-          setError('Current user admin data not found')
+          toast.error('Current user admin data not found. Please contact support.')
+          setLoading(false)
           return
         }
         authorData = data
       }
 
+      const finalSlug = formData.slug.trim() || generateSlug(formData.title)
+
       const { data: articleData, error: articleError } = await supabase
         .from('articles')
         .insert([{
           title: formData.title,
-          slug: formData.slug || generateSlug(formData.title),
+          slug: finalSlug,
           excerpt: formData.excerpt,
           content: formData.content,
           author: authorData.name,
@@ -187,11 +203,13 @@ export const CreateBlog: React.FC = () => {
         .single()
 
       if (articleError) {
+        console.error('Article creation error:', articleError)
         if (articleError.code === '23505') {
-          setError('A blog with this slug already exists')
+          toast.error('A blog with this slug already exists. Please use a different title or slug.')
         } else {
-          setError(`Failed to create blog: ${articleError.message}`)
+          toast.error(`Failed to create blog: ${articleError.message}`)
         }
+        setLoading(false)
         return
       }
 
@@ -208,6 +226,7 @@ export const CreateBlog: React.FC = () => {
 
         if (tagError) {
           console.error('Error adding tags:', tagError)
+          toast.error('Blog created but failed to add tags')
         }
       }
 
@@ -215,7 +234,7 @@ export const CreateBlog: React.FC = () => {
       navigate('/admin/blogs')
     } catch (err: any) {
       console.error('Error creating blog:', err)
-      setError(`An unexpected error occurred: ${err.message}`)
+      toast.error(`An unexpected error occurred: ${err.message || 'Please try again'}`)
     } finally {
       setLoading(false)
     }

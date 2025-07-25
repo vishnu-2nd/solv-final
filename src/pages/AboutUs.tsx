@@ -150,7 +150,8 @@ export const AboutUs: React.FC = () => {
         </div>
       </section>
 
-      {/* Global Outlook */}
+      {/* Global Outlook - Commented Out */}
+      {/* 
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -195,8 +196,9 @@ export const AboutUs: React.FC = () => {
           </div>
         </div>
       </section>
+      */}
 
-      {/* Leadership Team */}
+      {/* About Founder */}
       <section className="py-20 bg-slate-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -205,34 +207,58 @@ export const AboutUs: React.FC = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl lg:text-4xl font-bold font-serif text-slate-900 mb-4">Leadership Team</h2>
+            <h2 className="text-3xl lg:text-4xl font-bold font-serif text-slate-900 mb-4">About Founder</h2>
             <p className="text-lg text-slate-600 max-w-3xl mx-auto">
-              Our partners bring decades of experience and specialized expertise to serve our clients' diverse needs.
+              Meet the visionary behind SOLV Legal, bringing decades of experience and specialized expertise to serve our clients' diverse needs.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {teamMembers.map((member, index) => (
-              <motion.div
-                key={member.name}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
-              >
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-full h-64 object-cover"
-                />
-                <div className="p-6">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-2">{member.name}</h3>
-                  <p className="text-slate-700 font-medium mb-1">{member.position}</p>
-                  <p className="text-slate-600 mb-2">{member.specialization}</p>
-                  <p className="text-slate-500 text-sm">{member.experience}</p>
+          <div className="max-w-4xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="bg-white rounded-lg shadow-lg overflow-hidden"
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+                <div className="relative h-80 lg:h-auto">
+                  <img
+                    src="https://images.pexels.com/photos/3777943/pexels-photo-3777943.jpeg?auto=compress&cs=tinysrgb&w=600"
+                    alt="Founder"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
-              </motion.div>
-            ))}
+                <div className="p-8 lg:p-12 flex flex-col justify-center">
+                  <h3 className="text-2xl lg:text-3xl font-bold font-serif text-slate-900 mb-4">
+                    Dr. Rajesh Kumar
+                  </h3>
+                  <p className="text-lg text-slate-700 font-medium mb-4">
+                    Founder & Managing Partner
+                  </p>
+                  <p className="text-slate-600 mb-6 leading-relaxed">
+                    With over 20 years of distinguished legal practice, Dr. Rajesh Kumar founded SOLV Legal 
+                    with a vision to revolutionize legal services through innovation and excellence. A graduate 
+                    of Harvard Law School and former Supreme Court clerk, he has successfully represented 
+                    Fortune 500 companies and emerging startups alike.
+                  </p>
+                  <p className="text-slate-600 mb-6 leading-relaxed">
+                    His expertise spans corporate law, intellectual property, and technology law. Dr. Kumar 
+                    has been recognized as one of India's top legal minds and frequently speaks at international 
+                    legal conferences on emerging legal trends and business law.
+                  </p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="bg-slate-50 p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-slate-900">20+</div>
+                      <div className="text-slate-600 text-sm">Years Experience</div>
+                    </div>
+                    <div className="bg-slate-50 p-4 rounded-lg text-center">
+                      <div className="text-2xl font-bold text-slate-900">500+</div>
+                      <div className="text-slate-600 text-sm">Cases Won</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>

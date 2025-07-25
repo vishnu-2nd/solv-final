@@ -10,8 +10,12 @@ export const Footer: React.FC = () => {
           {/* Company Info */}
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <Scale className="h-8 w-8 text-white" />
-              <span className="text-2xl font-bold text-white font-serif">SOLV</span>
+              <img 
+                src="/solv.svg" 
+                alt="SOLV Legal" 
+                className="h-8 w-auto"
+              />
+              <span className="text-2xl font-bold text-white font-serif">SOLV<span className="text-3xl">.</span></span>
             </div>
             <p className="text-slate-400 mb-4 max-w-md">
               A distinguished legal practice delivering innovative solutions with precision and integrity. 
@@ -65,7 +69,7 @@ export const Footer: React.FC = () => {
 
         <div className="border-t border-slate-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-slate-400 text-sm">
-            © 2024 SOLV Legal. All rights reserved.
+            © 2025 SOLV Legal. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link to="/disclaimer" className="text-slate-400 hover:text-white text-sm transition-colors">

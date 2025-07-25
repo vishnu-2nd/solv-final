@@ -311,9 +311,6 @@ export const EditBlog: React.FC = () => {
           />
           <p className="text-sm text-slate-500 mt-1">Add a YouTube, Vimeo, or other video URL to embed in the article</p>
         </div> */}
-                </select>
-              </div>
-            </div>
 
             <div>
               <label htmlFor="slug" className="block text-sm font-medium text-slate-700 mb-2">

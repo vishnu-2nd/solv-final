@@ -283,4 +283,5 @@ export const EditBlog: React.FC = () => {
       </div>
     </AdminLayout>
   )
+  )
 }

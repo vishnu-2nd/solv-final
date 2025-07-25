@@ -244,22 +244,39 @@ export const CreateBlog: React.FC = () => {
             </div>
           )}
 
-        
-        {/* Video URL field commented out as requested */}
-        {/* <div>
-          <label htmlFor="video_url" className="block text-sm font-medium text-slate-700 mb-2">
-            Video URL (Optional)
-          </label>
-          <input
-            type="url"
-            id="video_url"
-            value={formData.video_url}
-            onChange={(e) => setFormData(prev => ({ ...prev, video_url: e.target.value }))}
-            className="w-full px-4 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
-            placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
-          />
-          <p className="text-sm text-slate-500 mt-1">Add a YouTube, Vimeo, or other video URL to embed in the article</p>
-        </div> */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-2">
+                  Title *
+                </label>
+                <input
+                  type="text"
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => handleTitleChange(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+                  placeholder="Enter blog title"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="status" className="block text-sm font-medium text-slate-700 mb-2">
+                  Status *
+                </label>
+                <select
+                  id="status"
+                  value={formData.status}
+                  onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as 'draft' | 'published' }))}
+                  required
+                  className="w-full px-4 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+                >
+                  <option value="draft">Draft</option>
+                  <option value="published">Published</option>
+                </select>
+              </div>
+            </div>
 
             <div>
               <label htmlFor="slug" className="block text-sm font-medium text-slate-700 mb-2">
@@ -318,13 +335,12 @@ export const CreateBlog: React.FC = () => {
 
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-2">
-                Featured Image (Max 100KB) *
+                Featured Image (Max 100KB)
               </label>
               <div className="space-y-4">
                 <input
                   type="file"
                   accept="image/*"
-                  required
                   onChange={(e) => {
                     const file = e.target.files?.[0]
                     if (file) {
@@ -332,9 +348,8 @@ export const CreateBlog: React.FC = () => {
                       handleImageUpload(file)
                     }
                   }}
-                  className="block w-full text-sm text-red-600 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-red-50 file:text-red-700 hover:file:bg-red-100 border border-red-300 rounded-md"
+                  className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-slate-50 file:text-slate-700 hover:file:bg-slate-100"
                 />
-                <p className="text-sm text-red-600 font-medium">* Featured image is required</p>
                 {uploadingImage && (
                   <div className="flex items-center text-sm text-slate-600">
                     <Upload className="h-4 w-4 mr-2 animate-pulse" />

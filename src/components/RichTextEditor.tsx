@@ -231,8 +231,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
         <div className="w-px h-6 bg-slate-300 mx-1" />
         
-        {/* Image and Link buttons commented out as requested */}
-        {/* <ToolbarButton
+        <ToolbarButton
           onClick={addImage}
           title="Add Image"
         >
@@ -245,7 +244,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           title="Add Link"
         >
           <LinkIcon className="w-4 h-4" />
-        </ToolbarButton> */}
+        </ToolbarButton>
 
         <div className="w-px h-6 bg-slate-300 mx-1" />
         

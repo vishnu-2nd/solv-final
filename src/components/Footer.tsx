@@ -11,11 +11,11 @@ export const Footer: React.FC = () => {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
               <img 
-                {/* src="/solv.svg" 
+                src="/solv.svg" 
                 alt="SOLV Legal" 
                 className="h-8 w-auto"
               />
-              <span className="text-2xl font-bold text-white font-serif">SOLV<span className="text-3xl">.</span></span> */}
+              {/* <span className="text-2xl font-bold text-white font-serif">SOLV<span className="text-3xl">.</span></span> */}
               
             </div>
             <p className="text-slate-400 mb-4 max-w-md">

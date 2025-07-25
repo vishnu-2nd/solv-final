@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Phone, Mail, Clock, Send, CheckCircle } from 'lucide-react';
+import { CheckCircle, Clock, Mail, MapPin, Phone, Send } from 'lucide-react';
+import React, { useState } from 'react';
 
 export const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -41,17 +41,18 @@ export const Contact: React.FC = () => {
     {
       icon: Phone,
       title: 'Phone Numbers',
-      details: ['+91 80 1234 5678', '+91 80 1234 5679', 'Toll-free: +91 1800 123 SOLV']
+      // details: ['+91 80 1234 5678', '+91 80 1234 5679', 'Toll-free: +91 1800 123 SOLV']
+      details: ['+91 96868 32870 ']
     },
     {
       icon: Mail,
       title: 'Email Addresses',
-      details: ['info@solv.legal', 'careers@solv.legal', 'media@solv.legal']
+      details: ['info@solvadvocates.in', 'careers@solv.legal']
     },
     {
       icon: Clock,
       title: 'Business Hours',
-      details: ['Monday - Friday: 9:00 AM - 6:00 PM', 'Saturday: 10:00 AM - 2:00 PM', 'Sunday: Closed']
+      details: ['Monday - Friday: 9:00 AM - 9:00 PM', 'Saturday - Sunday: 10:00 AM - 6:00 PM']
     }
   ];
 
@@ -279,7 +280,7 @@ export const Contact: React.FC = () => {
                 className="bg-white text-slate-900 px-8 py-4 rounded-md font-semibold hover:bg-slate-100 transition-all duration-200 hover:scale-105 inline-flex items-center space-x-2"
               >
                 <Phone className="h-5 w-5" />
-                <span>Call Now: +91 80 1234 5678</span>
+                <span>Call Now: +91 96868 32870</span>
               </a>
               <a
                 href="mailto:info@solv.legal"

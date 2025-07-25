@@ -1,7 +1,6 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Briefcase, MapPin, Clock, Users, Heart, Lightbulb, Award, ArrowRight, Plus } from 'lucide-react';
+import { ArrowRight, Award, Briefcase, Clock, Heart, Lightbulb, MapPin, Plus, Users } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
 export const Careers: React.FC = () => {
@@ -230,7 +229,7 @@ export const Careers: React.FC = () => {
                 Every team member contributes to our mission of delivering outstanding legal services while building 
                 a sustainable and fulfilling career.
               </p>
-              <div className="grid grid-cols-2 gap-4">
+              {/* <div className="grid grid-cols-2 gap-4">
                 <div className="bg-white p-4 rounded-lg shadow-sm">
                   <div className="text-2xl font-bold text-slate-900">95%</div>
                   <div className="text-slate-600">Employee Satisfaction</div>
@@ -239,7 +238,7 @@ export const Careers: React.FC = () => {
                   <div className="text-2xl font-bold text-slate-900">87%</div>
                   <div className="text-slate-600">Internal Promotion Rate</div>
                 </div>
-              </div>
+              </div> */}
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: 30 }}

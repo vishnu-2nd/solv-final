@@ -13,6 +13,11 @@ interface Blog {
   updated_at: string
 }
 
+// Cache for blogs data to avoid repeated API calls
+let blogsCache: Blog[] | null = null
+let blogsCacheTimestamp: number = 0
+const BLOGS_CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+
 export const AdminBlogs: React.FC = () => {
   const [blogs, setBlogs] = useState<Blog[]>([])
   const [loading, setLoading] = useState(true)
@@ -23,6 +28,14 @@ export const AdminBlogs: React.FC = () => {
   }, [])
 
   const fetchBlogs = async () => {
+    // Check if we have valid cached data
+    const now = Date.now()
+    if (blogsCache && blogsCacheTimestamp && (now - blogsCacheTimestamp) < BLOGS_CACHE_DURATION) {
+      setBlogs(blogsCache)
+      setLoading(false)
+      return
+    }
+    
     try {
       console.log('Fetching blogs...')
       const { data, error } = await supabase
@@ -37,9 +50,15 @@ export const AdminBlogs: React.FC = () => {
       
       console.log('Blogs fetched successfully:', data?.length || 0, 'blogs')
       setBlogs(data || [])
+      // Cache the blogs data
+      blogsCache = data || []
+      blogsCacheTimestamp = now
     } catch (error) {
       console.error('Error fetching blogs:', error)
       console.error('Full error details:', JSON.stringify(error, null, 2))
+      // Clear cache on error
+      blogsCache = null
+      blogsCacheTimestamp = 0
     } finally {
       setLoading(false)
     }
@@ -60,6 +79,10 @@ export const AdminBlogs: React.FC = () => {
       if (error) throw error
       
       setBlogs(blogs.filter(blog => blog.id !== id))
+      // Update cache after deletion
+      if (blogsCache) {
+        blogsCache = blogsCache.filter(blog => blog.id !== id)
+      }
     } catch (error) {
       console.error('Error deleting blog:', error)
       alert('Failed to delete blog')

@@ -15,6 +15,11 @@ interface Job {
   updated_at: string
 }
 
+// Cache for jobs data to avoid repeated API calls
+let jobsCache: Job[] | null = null
+let jobsCacheTimestamp: number = 0
+const JOBS_CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+
 export const AdminJobs: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
@@ -25,6 +30,14 @@ export const AdminJobs: React.FC = () => {
   }, [])
 
   const fetchJobs = async () => {
+    // Check if we have valid cached data
+    const now = Date.now()
+    if (jobsCache && jobsCacheTimestamp && (now - jobsCacheTimestamp) < JOBS_CACHE_DURATION) {
+      setJobs(jobsCache)
+      setLoading(false)
+      return
+    }
+    
     try {
       console.log('Fetching jobs...')
       const { data, error } = await supabase
@@ -39,9 +52,15 @@ export const AdminJobs: React.FC = () => {
       
       console.log('Jobs fetched successfully:', data?.length || 0, 'jobs')
       setJobs(data || [])
+      // Cache the jobs data
+      jobsCache = data || []
+      jobsCacheTimestamp = now
     } catch (error) {
       console.error('Error fetching jobs:', error)
       console.error('Full error details:', JSON.stringify(error, null, 2))
+      // Clear cache on error
+      jobsCache = null
+      jobsCacheTimestamp = 0
     } finally {
       setLoading(false)
     }
@@ -62,6 +81,10 @@ export const AdminJobs: React.FC = () => {
       if (error) throw error
       
       setJobs(jobs.filter(job => job.id !== id))
+      // Update cache after deletion
+      if (jobsCache) {
+        jobsCache = jobsCache.filter(job => job.id !== id)
+      }
     } catch (error) {
       console.error('Error deleting job:', error)
       alert('Failed to delete job')

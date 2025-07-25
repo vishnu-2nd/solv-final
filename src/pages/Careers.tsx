@@ -257,7 +257,8 @@ export const Careers: React.FC = () => {
       </section>
 
       {/* Application Process */}
-      <section className="py-20 bg-slate-50">
+      {/* Application Process */}
+      {/* <section className="py-20 bg-slate-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -291,7 +292,7 @@ export const Careers: React.FC = () => {
             </div>
           </motion.div>
         </div>
-      </section>
+      </section> */}
 
       {/* Final CTA */}
       <section className="py-20 bg-slate-900 text-white">

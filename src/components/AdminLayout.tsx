@@ -33,11 +33,11 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-50 ${sidebarOpen ? 'w-64' : 'w-16'} bg-slate-900 text-white transition-all duration-300`}>
         <div className="flex items-center space-x-2 p-6 border-b border-slate-800">
-          <img 
+          {/* <img 
             src="/solv.svg" 
             alt="SOLV Legal" 
             className="h-8 w-auto flex-shrink-0"
-          />
+          /> */}
           {sidebarOpen && (
             <div>
               <span className="text-xl font-bold font-serif">SOLV<span className="text-2xl">.</span> Admin</span>

@@ -4,6 +4,11 @@ import { supabase } from '../../lib/supabase'
 import { AdminLayout } from '../../components/AdminLayout'
 import { FileText, Briefcase, Users, TrendingUp } from 'lucide-react'
 
+// Cache for dashboard stats to avoid repeated API calls
+let statsCache: any = null
+let statsCacheTimestamp: number = 0
+const STATS_CACHE_DURATION = 10 * 60 * 1000 // 10 minutes
+
 export const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState({
     totalBlogs: 0,
@@ -19,6 +24,14 @@ export const AdminDashboard: React.FC = () => {
   }, [])
 
   const fetchStats = async () => {
+    // Check if we have valid cached data
+    const now = Date.now()
+    if (statsCache && statsCacheTimestamp && (now - statsCacheTimestamp) < STATS_CACHE_DURATION) {
+      setStats(statsCache)
+      setLoading(false)
+      return
+    }
+    
     try {
       setError(null)
       console.log('Fetching dashboard stats...')
@@ -75,22 +88,33 @@ export const AdminDashboard: React.FC = () => {
         recentJobs
       })
       
-      setStats({
+      const newStats = {
         totalBlogs: totalBlogs || 0,
         totalJobs: totalJobs || 0,
         recentBlogs: recentBlogs || 0,
         recentJobs: recentJobs || 0
-      })
+      }
+      
+      setStats(newStats)
+      // Cache the stats data
+      statsCache = newStats
+      statsCacheTimestamp = now
     } catch (error) {
       console.error('Error fetching stats:', error)
       console.error('Full error details:', JSON.stringify(error, null, 2))
       setError('Failed to load dashboard statistics')
+      // Clear cache on error
+      statsCache = null
+      statsCacheTimestamp = 0
     } finally {
       setLoading(false)
     }
   }
 
   const retry = () => {
+    // Clear cache on retry
+    statsCache = null
+    statsCacheTimestamp = 0
     setLoading(true)
     setError(null)
     fetchStats()

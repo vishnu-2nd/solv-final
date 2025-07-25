@@ -24,15 +24,22 @@ export const AdminBlogs: React.FC = () => {
 
   const fetchBlogs = async () => {
     try {
+      console.log('Fetching blogs...')
       const { data, error } = await supabase
         .from('articles')
         .select('id, title, slug, author, created_at, updated_at')
         .order('created_at', { ascending: false })
 
-      if (error) throw error
+      if (error) {
+        console.error('Supabase error fetching blogs:', error)
+        throw error
+      }
+      
+      console.log('Blogs fetched successfully:', data?.length || 0, 'blogs')
       setBlogs(data || [])
     } catch (error) {
       console.error('Error fetching blogs:', error)
+      console.error('Full error details:', JSON.stringify(error, null, 2))
     } finally {
       setLoading(false)
     }

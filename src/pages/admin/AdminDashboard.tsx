@@ -19,43 +19,62 @@ export const AdminDashboard: React.FC = () => {
   }, [])
 
   const fetchStats = async () => {
-    let timeoutId: NodeJS.Timeout
-    
     try {
       setError(null)
-      
-      // Set timeout for stats fetch
-      timeoutId = setTimeout(() => {
-        setError('Failed to load dashboard data. Please refresh the page.')
-        setLoading(false)
-      }, 10000) // 10 second timeout
+      console.log('Fetching dashboard stats...')
       
       // Get total blogs
-      const { count: totalBlogs } = await supabase
+      const { count: totalBlogs, error: blogsError } = await supabase
         .from('articles')
         .select('*', { count: 'exact', head: true })
+      
+      if (blogsError) {
+        console.error('Error fetching blogs count:', blogsError)
+        throw blogsError
+      }
 
       // Get total jobs
-      const { count: totalJobs } = await supabase
+      const { count: totalJobs, error: jobsError } = await supabase
         .from('jobs')
         .select('*', { count: 'exact', head: true })
+      
+      if (jobsError) {
+        console.error('Error fetching jobs count:', jobsError)
+        throw jobsError
+      }
 
       // Get recent blogs (last 7 days)
       const weekAgo = new Date()
       weekAgo.setDate(weekAgo.getDate() - 7)
       
-      const { count: recentBlogs } = await supabase
+      const { count: recentBlogs, error: recentBlogsError } = await supabase
         .from('articles')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', weekAgo.toISOString())
+      
+      if (recentBlogsError) {
+        console.error('Error fetching recent blogs:', recentBlogsError)
+        throw recentBlogsError
+      }
 
       // Get recent jobs (last 7 days)
-      const { count: recentJobs } = await supabase
+      const { count: recentJobs, error: recentJobsError } = await supabase
         .from('jobs')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', weekAgo.toISOString())
+      
+      if (recentJobsError) {
+        console.error('Error fetching recent jobs:', recentJobsError)
+        throw recentJobsError
+      }
 
-      clearTimeout(timeoutId)
+      console.log('Dashboard stats fetched successfully:', {
+        totalBlogs,
+        totalJobs,
+        recentBlogs,
+        recentJobs
+      })
+      
       setStats({
         totalBlogs: totalBlogs || 0,
         totalJobs: totalJobs || 0,
@@ -64,6 +83,7 @@ export const AdminDashboard: React.FC = () => {
       })
     } catch (error) {
       console.error('Error fetching stats:', error)
+      console.error('Full error details:', JSON.stringify(error, null, 2))
       setError('Failed to load dashboard statistics')
     } finally {
       setLoading(false)

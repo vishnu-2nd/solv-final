@@ -196,7 +196,8 @@ export const CreateBlog: React.FC = () => {
           author_id: authorData.id,
           status: formData.status,
           is_featured: formData.is_featured,
-          featured_image: formData.featured_image || null
+          featured_image: formData.featured_image || null,
+          video_url: formData.video_url || null
         }])
         .select()
         .single()
@@ -372,6 +373,21 @@ export const CreateBlog: React.FC = () => {
                   </div>
                 )}
               </div>
+            </div>
+
+            <div>
+              <label htmlFor="video_url" className="block text-sm font-medium text-slate-700 mb-2">
+                Video URL (Optional)
+              </label>
+              <input
+                type="url"
+                id="video_url"
+                value={formData.video_url}
+                onChange={(e) => setFormData(prev => ({ ...prev, video_url: e.target.value }))}
+                className="w-full px-4 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-transparent"
+                placeholder="https://youtube.com/watch?v=... or https://vimeo.com/..."
+              />
+              <p className="text-sm text-slate-500 mt-1">Add a YouTube, Vimeo, or other video URL to embed in the article</p>
             </div>
 
             <div>

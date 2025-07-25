@@ -26,15 +26,22 @@ export const AdminJobs: React.FC = () => {
 
   const fetchJobs = async () => {
     try {
+      console.log('Fetching jobs...')
       const { data, error } = await supabase
         .from('jobs')
         .select('id, title, department, location, type, experience, created_at, updated_at')
         .order('created_at', { ascending: false })
 
-      if (error) throw error
+      if (error) {
+        console.error('Supabase error fetching jobs:', error)
+        throw error
+      }
+      
+      console.log('Jobs fetched successfully:', data?.length || 0, 'jobs')
       setJobs(data || [])
     } catch (error) {
       console.error('Error fetching jobs:', error)
+      console.error('Full error details:', JSON.stringify(error, null, 2))
     } finally {
       setLoading(false)
     }
